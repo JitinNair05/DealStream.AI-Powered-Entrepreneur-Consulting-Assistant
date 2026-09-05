@@ -5,7 +5,7 @@ from openai import OpenAI
 DB = "sales_ai.db"
 
 # 🔑 Hardcoded API Key
-client = OpenAI(api_key="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")
+client = OpenAI(api_key="Your API Key")
 
 def update_stage(user_id, stage):
     conn = sqlite3.connect(DB)
