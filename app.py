@@ -101,7 +101,7 @@ if menu == "Logout":
 # --------------------- Settings ---------------------
 if menu == "Settings":
     st.header("Settings")
-    st.info("API key is hardcoded for this demo.")
+    st.info("API key is loaded securely from the environment.")
 
 # --------------------- User Portal ---------------------
 if st.session_state["role"] == "user" and menu == "Portal":
