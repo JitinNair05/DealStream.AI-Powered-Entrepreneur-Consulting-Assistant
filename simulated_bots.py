@@ -1,11 +1,16 @@
 import sqlite3
+import os
 from datetime import datetime
 from openai import OpenAI
+from dotenv import load_dotenv
+
+load_dotenv()
 
 DB = "sales_ai.db"
 
-# 🔑 Hardcoded API Key
-client = OpenAI(api_key="Your API Key")
+# Load API key securely from environment variables
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
 
 def update_stage(user_id, stage):
     conn = sqlite3.connect(DB)
@@ -13,6 +18,7 @@ def update_stage(user_id, stage):
     c.execute("UPDATE users SET stage=? WHERE id=?", (stage, user_id))
     conn.commit()
     conn.close()
+
 
 def save_message(user_id, role, text):
     conn = sqlite3.connect(DB)
@@ -23,6 +29,7 @@ def save_message(user_id, role, text):
     )
     conn.commit()
     conn.close()
+
 
 def cold_caller(user_id, name):
     prompt = f"Call the user named {name} and greet them warmly. Introduce yourself as a sales representative and explain our product in a conversational way."
@@ -35,6 +42,7 @@ def cold_caller(user_id, name):
     )
     return {"transcript": completion.choices[0].message.content}
 
+
 def lead_caller(user_id, name, user_msg):
     prompt = f"The user named {name} said: '{user_msg}'. As a lead caller, answer any doubts about the product in a helpful, professional tone."
     completion = client.chat.completions.create(
@@ -46,6 +54,7 @@ def lead_caller(user_id, name, user_msg):
     )
     return {"transcript": completion.choices[0].message.content}
 
+
 def decision_caller(user_id, name, user_msg):
     prompt = f"The user named {name} said: '{user_msg}'. As a decision caller, close the deal and confirm their preferred time slot."
     completion = client.chat.completions.create(
@@ -56,6 +65,7 @@ def decision_caller(user_id, name, user_msg):
         ]
     )
     return {"transcript": completion.choices[0].message.content}
+
 
 def detect_interest(user_msg):
     msg_lower = user_msg.lower()
